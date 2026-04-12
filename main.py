@@ -56,17 +56,17 @@ def webhook():
     
     if text == "/start":
         welcome_msg = (
-            "🚀 Welcome to the Worlde Bot! 🚀\n\n"
+            "🚀 *Welcome to the Worlde Bot!* 🚀\n\n"
             "I'm feeling lucky today... I'll crack the code in "
             "less than 6 tries! 🧠✨\n\n"
-            "------------------------------------------\n"
+
             "📝 HOW TO FEED ME DATA:\n"
             "After each guess, send me a 5-letter string:\n"
             "  🟩 G = Green (Correct spot!)\n"
             "  🟨 Y = Yellow (Wrong spot!)\n"
             "  ⬛ X = Gray (Not in word!)\n\n"
-            "📍 Example: XXYXG\n"
-            "------------------------------------------\n\n"
+            "📍 Example: XXYXG\n\n"
+
             "🎉 If I get it right, just type: 'found'\n\n"
             "Ready to play? Let's get started! 🎮"
         )
