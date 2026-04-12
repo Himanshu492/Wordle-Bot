@@ -56,11 +56,19 @@ def webhook():
     
     if text == "/start":
         welcome_msg = (
-            "Welcome to the Wordle Bot!\n"
-            "I will guess the word in less than 6 tries.\n"
-            "Enter the result of each guess in a five-letter string.\n"
-            "Y - Yellow, G - Green, X - Not in word (e.g., XXYXG).\n"
-            "If the word is found, enter 'found'."
+            "🚀 Welcome to the Worlde Bot! 🚀\n\n"
+            "I'm feeling lucky today... I'll crack the code in "
+            "less than 6 tries! 🧠✨\n\n"
+            "------------------------------------------\n"
+            "📝 HOW TO FEED ME DATA:\n"
+            "After each guess, send me a 5-letter string:\n"
+            "  🟩 G = Green (Correct spot!)\n"
+            "  🟨 Y = Yellow (Wrong spot!)\n"
+            "  ⬛ X = Gray (Not in word!)\n\n"
+            "📍 Example: XXYXG\n"
+            "------------------------------------------\n\n"
+            "🎉 If I get it right, just type: 'found'\n\n"
+            "Ready to play? Let's get started! 🎮"
         )
 
         send_message(chat_id, welcome_msg)
