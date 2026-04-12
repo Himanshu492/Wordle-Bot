@@ -36,7 +36,7 @@ def home():
 @app.route("/webhook", methods=["POST"])
 def webhook():
     secret = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
-    if secret != WEBOOK_SECRET:
+    if secret != WEBHOOK_SECRET:
         return jsonify({"status": "forbidden"}), 403
     
     update = request.get_json(silent=True)

@@ -20,3 +20,4 @@ data = {
 
 response = requests.post(url, json=data)
 result = response.json()
+print(result)
