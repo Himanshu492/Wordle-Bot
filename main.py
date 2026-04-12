@@ -22,7 +22,8 @@ def telegram_post(method, data):
 def send_message(chat_id, text):
     data = {
         "chat_id": chat_id,
-        "text": text
+        "text": text,
+        "parse_mode": "HTML"
     }
     response = telegram_post("sendMessage", data)
     return response
@@ -56,19 +57,17 @@ def webhook():
     
     if text == "/start":
         welcome_msg = (
-            "🚀 *Welcome to the Worlde Bot!* 🚀\n\n"
-            "I'm feeling lucky today... I'll crack the code in "
-            "less than 6 tries! 🧠✨\n\n"
-
-            "📝 HOW TO FEED ME DATA:\n"
-            "After each guess, send me a 5-letter string:\n"
-            "  🟩 G = Green (Correct spot!)\n"
-            "  🟨 Y = Yellow (Wrong spot!)\n"
-            "  ⬛ X = Gray (Not in word!)\n\n"
-            "📍 Example: XXYXG\n\n"
-
-            "🎉 If I get it right, just type: 'found'\n\n"
-            "Ready to play? Let's get started! 🎮"
+            "🎮 <b>Welcome to the Wordle Bot!</b>\n\n"
+            "Send me the result of each guess, and I’ll try to solve the word in <b>under 6 tries</b>. 🧠\n\n"
+            "<b>Format</b>\n"
+            "Use a 5-letter string after each guess:\n\n"
+            "🟩 <b>G</b> = Correct letter, correct spot\n"
+            "🟨 <b>Y</b> = Correct letter, wrong spot\n"
+            "⬛ <b>X</b> = Letter not in the word\n\n"
+            "<b>Example</b>\n"
+            "<code>XXYXG</code>\n\n"
+            "If I solve it, send <code>found</code> 🎉\n\n"
+            "Let’s begin."
         )
 
         send_message(chat_id, welcome_msg)
