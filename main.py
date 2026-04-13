@@ -57,7 +57,7 @@ def update_game(chat_id, guess, space, found, tries):
 
 def load_gueses():
     return_dict = {}
-    with open("guesses.csv", 'r') as f:
+    with open("guess_db.csv", 'r') as f:
         for line in f:
             result, guess = line.strip().split(",")
             return_dict[result] = guess
