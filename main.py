@@ -4,7 +4,7 @@ import os
 from pymongo import MongoClient
 import dotenv
 from database_utils import delete_record, get_record, insert_record, update_record
-from wordle_logic import get_next_guess, not_valid_result
+from wordle_logic import get_next_guess, not_valid_result, update_game_state
 
 dotenv.load_dotenv()
 
@@ -157,13 +157,19 @@ def webhook():
             return jsonify({"ok": True})
         
         if game["tries"] == 1 and result in guesses_dict:
-            guess = guesses_dict[result]
+            guess = guesses_dict[result].lower()
+            space, found = update_game_state(
+                result=result,
+                guess=game["guess"],
+                space=game["space"],
+                found=game["found"]
+            )
             send_message(chat_id, f"Guess this word - <b>{guess.upper()}</b>")
             update_game(
                 chat_id=chat_id,
                 guess=guess,
-                space=game["space"],
-                found=game["found"],
+                space=space,
+                found=found,
                 tries=game["tries"] + 1
             )
             return jsonify({"ok": True})
