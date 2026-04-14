@@ -155,7 +155,7 @@ def webhook():
             insert_record({"update_id": update_id}, update_ids)
             return jsonify({"ok": True})
 
-        if result == "FOUND":
+        if result == "FOUND" or result == "GGGGG":
             send_message(chat_id, f"The word was <b>{game['guess'].upper()}</b>! Found in {game['tries']} guesses!")
             delete_record({"chat_id": chat_id}, pending)
             insert_record({"update_id": update_id}, update_ids)
