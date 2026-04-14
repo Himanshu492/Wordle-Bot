@@ -19,6 +19,7 @@ API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 client = MongoClient(MONGO_URI)
 db = client["wordle"]
 pending = db["pending"]
+update_ids = db["update_ids"]
 FIRST_GUESS = "slate"
 MAX_GUESSES = 6
 
@@ -81,7 +82,11 @@ def webhook():
     
     update = request.get_json(silent=True)
     if not update:
-            return jsonify({"status": "bad request"}), 400
+        return jsonify({"status": "bad request"}), 400
+    
+    update_id = update.get("update_id")
+    if update_id is None or get_record({"update_id": update_id}, update_ids):
+        return jsonify({"ok": True})
 
     message = update.get("message")
     if not message:
@@ -115,6 +120,7 @@ def webhook():
         )
 
         send_message(chat_id, welcome_msg)
+        insert_record({"update_id": update_id}, update_ids)
         return jsonify({"ok": True})
 
     if text == "/wordle":
@@ -137,6 +143,7 @@ def webhook():
         else:
             insert_record(game, pending)
 
+        insert_record({"update_id": update_id}, update_ids)
         return jsonify({"ok": True})
     
     game = get_record({"chat_id": chat_id}, pending)
@@ -145,16 +152,19 @@ def webhook():
 
         if not_valid_result(result):
             send_message(chat_id, "Please send a 5-letter result using only X, Y, and G. Example: <b>XXYXG</b>")
+            insert_record({"update_id": update_id}, update_ids)
             return jsonify({"ok": True})
 
         if result == "FOUND":
             send_message(chat_id, f"The word was <b>{game['guess'].upper()}</b>! Found in {game['tries']} guesses!")
             delete_record({"chat_id": chat_id}, pending)
+            insert_record({"update_id": update_id}, update_ids)
             return jsonify({"ok": True})
 
         if game["tries"] >= MAX_GUESSES:
             send_message(chat_id, "Word was not found :(")
             delete_record({"chat_id": chat_id}, pending)
+            insert_record({"update_id": update_id}, update_ids)
             return jsonify({"ok": True})
         
         if game["tries"] == 1 and result in guesses_dict:
@@ -174,6 +184,7 @@ def webhook():
                     found=found,
                     tries=game["tries"] + 1
                 )
+                insert_record({"update_id": update_id}, update_ids)
                 return jsonify({"ok": True})
 
         guess, space, found = get_next_guess(
@@ -187,6 +198,7 @@ def webhook():
         if not guess:
             send_message(chat_id, "No words left to guess.")
             delete_record({"chat_id": chat_id}, pending)
+            insert_record({"update_id": update_id}, update_ids)
             return jsonify({"ok": True})
 
         update_game(
@@ -198,10 +210,11 @@ def webhook():
         )
 
         send_message(chat_id, f"Guess this word - <b>{guess.upper()}</b>")
+        insert_record({"update_id": update_id}, update_ids)
         return jsonify({"ok": True})
-        
     
     send_message(chat_id, "I don't understand 😅. Please use /start to begin.")
+    insert_record({"update_id": update_id}, update_ids)
     return jsonify({"ok": True})
 
 if __name__ == "__main__":
