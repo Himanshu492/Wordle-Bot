@@ -44,7 +44,8 @@ def send_message(chat_id, text):
 
 
 def update_game(chat_id, guess, space, found, tries):
-    update_record({"chat_id": chat_id},
+    update_record(
+        {"chat_id": chat_id},
         {
             "guess": guess,
             "space": space,
@@ -110,7 +111,7 @@ def webhook():
             "<b>Example</b>\n"
             "<code>XXYXG</code>\n\n"
             "If I solve it, send <b>found</b> 🎉\n\n"
-            "Enter /wordle to begin!"
+            "Enter /wordle to play!"
         )
 
         send_message(chat_id, welcome_msg)
@@ -158,21 +159,22 @@ def webhook():
         
         if game["tries"] == 1 and result in guesses_dict:
             guess = guesses_dict[result].lower()
-            space, found = update_game_state(
-                result=result,
-                guess=game["guess"],
-                space=game["space"],
-                found=game["found"]
-            )
-            send_message(chat_id, f"Guess this word - <b>{guess.upper()}</b>")
-            update_game(
-                chat_id=chat_id,
-                guess=guess,
-                space=space,
-                found=found,
-                tries=game["tries"] + 1
-            )
-            return jsonify({"ok": True})
+            if guess != "":
+                space, found = update_game_state(
+                    result=result,
+                    guess=game["guess"],
+                    space=game["space"],
+                    found=game["found"]
+                )
+                send_message(chat_id, f"Guess this word - <b>{guess.upper()}</b>")
+                update_game(
+                    chat_id=chat_id,
+                    guess=guess,
+                    space=space,
+                    found=found,
+                    tries=game["tries"] + 1
+                )
+                return jsonify({"ok": True})
 
         guess, space, found = get_next_guess(
             result=result,
@@ -186,24 +188,20 @@ def webhook():
             send_message(chat_id, "No words left to guess.")
             delete_record({"chat_id": chat_id}, pending)
             return jsonify({"ok": True})
-        
-        game["guess"] = guess
-        game["space"] = space
-        game["found"] = found
-        game["tries"] += 1
+
         update_game(
             chat_id=chat_id,
-            guess=game["guess"],
-            space=game["space"],
-            found=game["found"],
-            tries=game["tries"]
+            guess=guess,
+            space=space,
+            found=found,
+            tries=game["tries"] + 1
         )
 
         send_message(chat_id, f"Guess this word - <b>{guess.upper()}</b>")
         return jsonify({"ok": True})
         
     
-    send_message(chat_id, "I don't understand 😅. Please use /start to begin the game.")
+    send_message(chat_id, "I don't understand 😅. Please use /start to begin.")
     return jsonify({"ok": True})
 
 if __name__ == "__main__":
